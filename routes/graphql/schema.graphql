@@ -10,24 +10,24 @@ type Query {
 }
 
 type Mutation {
-    createUser(
-        name: String @rules(apply: ["required"])
-        email: String @rules(apply: ["required", "email", "unique:users,email"])
-    ): User @create(model: "App\\Models\\User")
+    userLogin(
+        email: String @rules(apply: ["required", "email", "exists:users,email,deleted_at,NULL", "max:191"])
+        password: String @rules(apply: ["required", "max:191"])
+    ): User
     updateUser(
-        id: ID @rules(apply: ["required"])
-        name: String
-        email: String @rules(apply: ["email"])
+        id: ID @rules(apply: ["required", "integer", "exists:users,id,deleted_at,NULL"])
+        name: String! @rules(apply: ["required", "max:191"])
+        surname: String! @rules(apply: ["required", "max:191"])
     ): User @update(model: "App\\Models\\User")
     deleteUser(
-        id: ID @rules(apply: ["required"])
+        id: ID @rules(apply: ["required", "integer", "exists:users,id,deleted_at,NULL"])
     ): User @delete(model: "App\\Models\\User")
 }
 
 type User {
     id: ID!
     name: String!
+    surname: String!
     email: String!
     created_at: DateTime!
-    updated_at: DateTime!
 }
