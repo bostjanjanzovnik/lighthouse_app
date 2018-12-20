@@ -7,6 +7,7 @@ scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
 type Query {
     users: [User!]! @paginate(type: "paginator" model: "App\\Models\\User")
     user(id: ID @eq): User @find(model: "App\\Models\\User")
+    authenticatedUser: User
 }
 
 type Mutation {
@@ -14,6 +15,7 @@ type Mutation {
         email: String @rules(apply: ["required", "email", "exists:users,email,deleted_at,NULL", "max:191"])
         password: String @rules(apply: ["required", "max:191"])
     ): User
+    userLogout: Boolean
     updateUser(
         id: ID @rules(apply: ["required", "integer", "exists:users,id,deleted_at,NULL"])
         name: String! @rules(apply: ["required", "max:191"])

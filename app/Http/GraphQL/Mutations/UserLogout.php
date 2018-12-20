@@ -6,7 +6,7 @@ use GraphQL\Type\Definition\ResolveInfo;
 use Illuminate\Support\Facades\Auth;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
-class UserLogin
+class UserLogout
 {
     /**
      * Return a value for the field.
@@ -20,10 +20,12 @@ class UserLogin
      */
     public function resolve($rootValue, array $args, GraphQLContext $context = null, ResolveInfo $resolveInfo)
     {
-        if (Auth::attempt(['email' => $args['email'], 'password' => $args['password']])) {
-            return Auth::user();
+        if (Auth::check()) {
+            Auth::logout();
+
+            return true;
         }
 
-        return null;
+        return false;
     }
 }
