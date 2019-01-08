@@ -4,26 +4,28 @@ scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date
 "A date string with format 'Y-m-d', e.g. '2011-05-23'."
 scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
 
+scalar AccessToken
+
 type Query {
-    users: [User!]! @paginate(type: "paginator" model: "App\\Models\\User")
-    user(id: ID @eq): User @find(model: "App\\Models\\User")
-    authenticatedUser: User
+    users: [User!]! @paginate(type: "paginator" model: "App\\Models\\User") @middleware(checks: ["jwt.auth"])
+    user(id: ID @eq): User @find(model: "App\\Models\\User") @middleware(checks: ["jwt.auth"])
+    loggedUser: User @auth
 }
 
 type Mutation {
     userLogin(
         email: String @rules(apply: ["required", "email", "exists:users,email,deleted_at,NULL", "max:191"])
         password: String @rules(apply: ["required", "max:191"])
-    ): User
+    ): AccessToken
     userLogout: Boolean
     updateUser(
-        id: ID @rules(apply: ["required", "integer", "exists:users,id,deleted_at,NULL"])
-        name: String! @rules(apply: ["required", "max:191"])
-        surname: String! @rules(apply: ["required", "max:191"])
-    ): User @update(model: "App\\Models\\User")
+        id: ID! @rules(apply: ["integer", "exists:users,id,deleted_at,NULL"])
+        name: String! @rules(apply: ["max:191"])
+        surname: String! @rules(apply: ["max:191"])
+    ): User @update(model: "App\\Models\\User") @middleware(checks: ["jwt.auth"])
     deleteUser(
-        id: ID @rules(apply: ["required", "integer", "exists:users,id,deleted_at,NULL"])
-    ): User @delete(model: "App\\Models\\User")
+        id: ID! @rules(apply: ["integer", "exists:users,id,deleted_at,NULL"])
+    ): User @delete(model: "App\\Models\\User") @middleware(checks: ["jwt.auth"])
 }
 
 type User {
@@ -32,4 +34,10 @@ type User {
     surname: String!
     email: String!
     created_at: DateTime!
+}
+
+type AccessToken {
+    access_token: String
+    token_type: String
+    expires_in: Int
 }

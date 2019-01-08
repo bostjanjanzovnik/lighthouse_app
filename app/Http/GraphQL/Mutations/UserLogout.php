@@ -3,7 +3,6 @@
 namespace App\Http\GraphQL\Mutations;
 
 use GraphQL\Type\Definition\ResolveInfo;
-use Illuminate\Support\Facades\Auth;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class UserLogout
@@ -20,8 +19,8 @@ class UserLogout
      */
     public function resolve($rootValue, array $args, GraphQLContext $context = null, ResolveInfo $resolveInfo)
     {
-        if (Auth::check()) {
-            Auth::logout();
+        if (auth()->check()) {
+            auth()->logout();
 
             return true;
         }

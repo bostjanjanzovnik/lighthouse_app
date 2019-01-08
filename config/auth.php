@@ -14,7 +14,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'web',
+        'guard' => 'graphql',
         'passwords' => 'users',
     ],
 
@@ -43,6 +43,11 @@ return [
 
         'api' => [
             'driver' => 'session',
+            'provider' => 'users',
+        ],
+
+        'graphql' => [
+            'driver' => 'jwt',
             'provider' => 'users',
         ],
     ],

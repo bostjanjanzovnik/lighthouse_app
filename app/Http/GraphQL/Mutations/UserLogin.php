@@ -2,8 +2,8 @@
 
 namespace App\Http\GraphQL\Mutations;
 
+use App\Http\GraphQL\Scalars\AccessToken;
 use GraphQL\Type\Definition\ResolveInfo;
-use Illuminate\Support\Facades\Auth;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class UserLogin
@@ -20,8 +20,13 @@ class UserLogin
      */
     public function resolve($rootValue, array $args, GraphQLContext $context = null, ResolveInfo $resolveInfo)
     {
-        if (Auth::attempt(['email' => $args['email'], 'password' => $args['password']])) {
-            return Auth::user();
+        if ($token = auth()->attempt(['email' => $args['email'], 'password' => $args['password']])) {
+            $accessToken = new AccessToken();
+            $accessToken->access_token = $token;
+            $accessToken->token_type = 'bearer';
+            $accessToken->expires_in = auth()->factory()->getTTL() * 60;
+
+            return $accessToken;
         }
 
         return null;
