@@ -40,7 +40,7 @@
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
   },
-  "version": "0.0.0-development",
+  "version": "1.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bostjanjanzovnik/lighthouse_app.git"
